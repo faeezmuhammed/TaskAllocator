@@ -8,7 +8,7 @@ Automatically assign tasks to team members in the most efficient way.
 View the task assignment and workload for each team member.
 
 
-### `npm start`
+# Try it
 
 Runs the app in the development mode.\
 Open [https://taskallocator-n8y1.onrender.com](https://taskallocator-n8y1.onrender.com) to view it in your browser.

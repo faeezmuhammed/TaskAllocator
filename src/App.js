@@ -42,7 +42,7 @@ const App = () => {
     <div className="App">
       <h1>Task Assignment</h1>
       <div>
-        <label htmlFor="num-workers">Number of Workers:</label>
+        <label htmlFor="num-workers">Number of People:</label>
         <input
           type="number"
           id="num-workers"
@@ -56,9 +56,9 @@ const App = () => {
       <table>
         <thead>
           <tr>
-            <th>Task Name</th>
+            <th>Task</th>
             <th>Priority</th>
-            <th>Time</th>
+            <th>Time (Hr)</th>
           </tr>
         </thead>
         <tbody>

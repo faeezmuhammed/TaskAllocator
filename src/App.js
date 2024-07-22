@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import './App.css';
 
 const App = () => {
-  const [numWorkers, setNumWorkers] = useState(1);
+  const [numMembers, setNumMembers] = useState(1);
   const [tasks, setTasks] = useState([{ name: '', priority: 1, time: 1 }]);
   const [assignment, setAssignment] = useState([]);
 
-  const handleNumWorkersChange = (e) => {
-    setNumWorkers(parseInt(e.target.value));
+  const handleNumMembersChange = (e) => {
+    setNumMembers(parseInt(e.target.value));
   };
 
   const handleTaskChange = (index, field, value) => {
@@ -21,20 +21,20 @@ const App = () => {
   };
 
   const assignTasks = () => {
-    const sortedTasks = [...tasks].sort((a, b) => b.priority - a.priority || b.time - a.time);
-    const workerLoads = Array(numWorkers).fill(0);
-    const taskAssignment = Array.from({ length: numWorkers }, () => []);
+    const sortedTasks = [...tasks].sort((a, b) => a.priority - b.priority || b.time - a.time);
+    const memberLoads = Array(numMembers).fill(0);
+    const taskAssignment = Array.from({ length: numMembers }, () => []);
 
     sortedTasks.forEach((task) => {
-      const minLoadWorker = workerLoads.indexOf(Math.min(...workerLoads));
-      taskAssignment[minLoadWorker].push(task);
-      workerLoads[minLoadWorker] += parseInt(task.time);
+      const minLoadMember = memberLoads.indexOf(Math.min(...memberLoads));
+      taskAssignment[minLoadMember].push(task);
+      memberLoads[minLoadMember] += parseInt(task.time);
     });
 
     setAssignment(taskAssignment.map((tasks, index) => ({
-      worker: index + 1,
+      member: index + 1,
       tasks,
-      totalLoad: workerLoads[index]
+      totalLoad: memberLoads[index]
     })));
   };
 
@@ -42,12 +42,12 @@ const App = () => {
     <div className="App">
       <h1>Task Assignment</h1>
       <div>
-        <label htmlFor="num-workers">Number of People:</label>
+        <label htmlFor="num-members">Number of Team Members:</label>
         <input
           type="number"
-          id="num-workers"
-          value={numWorkers}
-          onChange={handleNumWorkersChange}
+          id="num-members"
+          value={numMembers}
+          onChange={handleNumMembersChange}
           min="1"
           required
         />
@@ -56,9 +56,9 @@ const App = () => {
       <table>
         <thead>
           <tr>
-            <th>Task</th>
+            <th>Task Name</th>
             <th>Priority</th>
-            <th>Time (Hr)</th>
+            <th>Time</th>
           </tr>
         </thead>
         <tbody>
@@ -102,9 +102,9 @@ const App = () => {
         Assign Tasks
       </button>
       <h2>Task Assignment Results</h2>
-      {assignment.map(({ worker, tasks, totalLoad }) => (
-        <div key={worker}>
-          <h3>Worker {worker} (Total Load: {totalLoad})</h3>
+      {assignment.map(({ member, tasks, totalLoad }) => (
+        <div key={member}>
+          <h3>Team Member {member} (Total Load: {totalLoad})</h3>
           <ul>
             {tasks.map((task, index) => (
               <li key={index}>

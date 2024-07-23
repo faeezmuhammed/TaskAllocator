@@ -76,7 +76,7 @@ const App = () => {
         <h2>Team Members</h2>
         {members.map((member, index) => (
           <div key={index}>
-            <label htmlFor={`member-name-${index}`}>Member {index + 1} Name:</label>
+            <label htmlFor={`member-name-${index}`}>Member {index + 1} Name:  </label>
             <input
               type="text"
               id={`member-name-${index}`}

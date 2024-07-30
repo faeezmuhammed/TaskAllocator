@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
 import './App.css';
 
+const skillLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
+const difficultyLevels = ['Easy', 'Moderate', 'Difficult', 'Architecture'];
+
 const App = () => {
   const [numMembers, setNumMembers] = useState(1);
-  const [members, setMembers] = useState([{ name: '' }]);
-  const [tasks, setTasks] = useState([{ name: '', priority: 1, time: 1 }]);
+  const [members, setMembers] = useState([{ name: '', skill: 'Beginner' }]);
+  const [tasks, setTasks] = useState([{ name: '', priority: 1, time: 1, difficulty: 'Easy' }]);
   const [assignment, setAssignment] = useState([]);
 
   const handleNumMembersChange = (e) => {
     const count = parseInt(e.target.value);
     setNumMembers(count);
-    const newMembers = Array.from({ length: count }, () => ({ name: '' }));
+    const newMembers = Array.from({ length: count }, () => ({ name: '', skill: 'Beginner' }));
     setMembers(newMembers);
   };
 
-  const handleMemberChange = (index, value) => {
+  const handleMemberChange = (index, field, value) => {
     const newMembers = [...members];
-    newMembers[index].name = value;
+    newMembers[index][field] = value;
     setMembers(newMembers);
   };
 
@@ -27,7 +30,7 @@ const App = () => {
   };
 
   const addTaskRow = () => {
-    setTasks([...tasks, { name: '', priority: 1, time: 1 }]);
+    setTasks([...tasks, { name: '', priority: 1, time: 1, difficulty: 'Easy' }]);
   };
 
   const deleteTaskRow = (index) => {
@@ -36,7 +39,7 @@ const App = () => {
   };
 
   const addMemberRow = () => {
-    setMembers([...members, { name: '' }]);
+    setMembers([...members, { name: '', skill: 'Beginner' }]);
   };
 
   const assignTasks = () => {
@@ -45,9 +48,25 @@ const App = () => {
     const taskAssignment = Array.from({ length: numMembers }, () => []);
 
     sortedTasks.forEach((task) => {
-      const minLoadMember = memberLoads.indexOf(Math.min(...memberLoads));
-      taskAssignment[minLoadMember].push(task);
-      memberLoads[minLoadMember] += parseFloat(task.time);
+      const eligibleMembers = members
+        .map((member, index) => ({ ...member, index }))
+        .filter(member => {
+          const { skill } = member;
+          const { difficulty } = task;
+          return (
+            (skill === 'Expert') ||
+            (skill === 'Advanced' && difficulty !== 'Architecture') ||
+            (skill === 'Intermediate' && difficulty !== 'Architecture' && difficulty !== 'Difficult') ||
+            (skill === 'Beginner' && (difficulty === 'Easy' || difficulty === 'Moderate'))
+          );
+        });
+
+      if (eligibleMembers.length > 0) {
+        eligibleMembers.sort((a, b) => memberLoads[a.index] - memberLoads[b.index]);
+        const minLoadMember = eligibleMembers[0].index;
+        taskAssignment[minLoadMember].push(task);
+        memberLoads[minLoadMember] += parseFloat(task.time);
+      }
     });
 
     setAssignment(taskAssignment.map((tasks, index) => ({
@@ -76,14 +95,25 @@ const App = () => {
         <h2>Team Members</h2>
         {members.map((member, index) => (
           <div key={index}>
-            <label htmlFor={`member-name-${index}`}>Member {index + 1} Name:  </label>
+            <label htmlFor={`member-name-${index}`}>Member {index + 1} Name: </label>
             <input
               type="text"
               id={`member-name-${index}`}
               value={member.name}
-              onChange={(e) => handleMemberChange(index, e.target.value)}
+              onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
               required
             />
+            <label htmlFor={`member-skill-${index}`}> Skill: </label>
+            <select
+              id={`member-skill-${index}`}
+              value={member.skill}
+              onChange={(e) => handleMemberChange(index, 'skill', e.target.value)}
+              required
+            >
+              {skillLevels.map(skill => (
+                <option key={skill} value={skill}>{skill}</option>
+              ))}
+            </select>
           </div>
         ))}
         {/* <button type="button" onClick={addMemberRow}>
@@ -97,6 +127,7 @@ const App = () => {
             <th>Task Name</th>
             <th>Priority</th>
             <th>Time</th>
+            <th>Difficulty</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -131,6 +162,17 @@ const App = () => {
                 />
               </td>
               <td>
+                <select
+                  value={task.difficulty}
+                  onChange={(e) => handleTaskChange(index, 'difficulty', e.target.value)}
+                  required
+                >
+                  {difficultyLevels.map(level => (
+                    <option key={level} value={level}>{level}</option>
+                  ))}
+                </select>
+              </td>
+              <td>
                 <button type="button" onClick={() => deleteTaskRow(index)}>Delete</button>
               </td>
             </tr>
@@ -151,7 +193,7 @@ const App = () => {
           <ul>
             {tasks.map((task, index) => (
               <li key={index}>
-                {task.name} (Priority: {task.priority}, Time: {task.time})
+                {task.name} (Priority: {task.priority}, Time: {task.time}, Difficulty: {task.difficulty})
               </li>
             ))}
           </ul>

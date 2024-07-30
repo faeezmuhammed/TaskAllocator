@@ -79,7 +79,7 @@ const App = () => {
   return (
     <div className="App">
       <h1>Task Assignment</h1>
-      <div>
+      <div className="form-group">
         <label htmlFor="num-members">Number of Team Members:</label>
         <input
           type="number"
@@ -90,12 +90,11 @@ const App = () => {
           required
         />
       </div>
-      <br />
-      <div>
+      <div className="members-section">
         <h2>Team Members</h2>
         {members.map((member, index) => (
-          <div key={index}>
-            <label htmlFor={`member-name-${index}`}>Member {index + 1} Name: </label>
+          <div key={index} className="member-input">
+            <label htmlFor={`member-name-${index}`}>Member {index + 1} Name:</label>
             <input
               type="text"
               id={`member-name-${index}`}
@@ -103,7 +102,7 @@ const App = () => {
               onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
               required
             />
-            <label htmlFor={`member-skill-${index}`}> Skill: </label>
+            <label htmlFor={`member-skill-${index}`}> Skill:</label>
             <select
               id={`member-skill-${index}`}
               value={member.skill}
@@ -116,84 +115,87 @@ const App = () => {
             </select>
           </div>
         ))}
-        {/* <button type="button" onClick={addMemberRow}>
-          Add Member
-        </button> */}
       </div>
-      <br />
-      <table>
-        <thead>
-          <tr>
-            <th>Task Name</th>
-            <th>Priority</th>
-            <th>Time</th>
-            <th>Difficulty</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((task, index) => (
-            <tr key={index}>
-              <td>
-                <input
-                  type="text"
-                  value={task.name}
-                  onChange={(e) => handleTaskChange(index, 'name', e.target.value)}
-                  required
-                />
-              </td>
-              <td>
-                <input
-                  type="number"
-                  value={task.priority}
-                  onChange={(e) => handleTaskChange(index, 'priority', parseInt(e.target.value))}
-                  min="1"
-                  required
-                />
-              </td>
-              <td>
-                <input
-                  type="number"
-                  value={task.time}
-                  onChange={(e) => handleTaskChange(index, 'time', parseFloat(e.target.value))}
-                  step="0.1"
-                  min="0"
-                  required
-                />
-              </td>
-              <td>
-                <select
-                  value={task.difficulty}
-                  onChange={(e) => handleTaskChange(index, 'difficulty', e.target.value)}
-                  required
-                >
-                  {difficultyLevels.map(level => (
-                    <option key={level} value={level}>{level}</option>
-                  ))}
-                </select>
-              </td>
-              <td>
-                <button type="button" onClick={() => deleteTaskRow(index)}>Delete</button>
-              </td>
+      <div className="tasks-section">
+        <h2>Tasks</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Task Name</th>
+              <th>Priority</th>
+              <th>Time</th>
+              <th>Difficulty</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <button type="button" onClick={addTaskRow}>
-        Add Task
-      </button>
-      <br /><br />
-      <button type="button" onClick={assignTasks}>
+          </thead>
+          <tbody>
+            {tasks.map((task, index) => (
+              <tr key={index}>
+                <td>
+                  <input
+                    type="text"
+                    value={task.name}
+                    onChange={(e) => handleTaskChange(index, 'name', e.target.value)}
+                    required
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    value={task.priority}
+                    onChange={(e) => handleTaskChange(index, 'priority', parseInt(e.target.value))}
+                    min="1"
+                    required
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    value={task.time}
+                    onChange={(e) => handleTaskChange(index, 'time', parseFloat(e.target.value))}
+                    step="0.1"
+                    min="0"
+                    required
+                  />
+                </td>
+                <td>
+                  <select
+                    value={task.difficulty}
+                    onChange={(e) => handleTaskChange(index, 'difficulty', e.target.value)}
+                    required
+                  >
+                    {difficultyLevels.map(level => (
+                      <option key={level} value={level}>{level}</option>
+                    ))}
+                  </select>
+                </td>
+                <td>
+                  <button type="button" onClick={() => deleteTaskRow(index)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button type="button" onClick={addTaskRow}>
+          Add Task
+        </button>
+      </div>
+      <button className="assign-button" type="button" onClick={assignTasks}>
         Assign Tasks
       </button>
       <h2>Task Assignment Results</h2>
       {assignment.map(({ member, tasks, totalLoad }) => (
-        <div key={member}>
+        <div key={member} className="assignment-result">
           <h3>{member} (Total Load: {totalLoad.toFixed(1)})</h3>
           <ul>
             {tasks.map((task, index) => (
               <li key={index}>
-                {task.name} (Priority: {task.priority}, Time: {task.time}, Difficulty: {task.difficulty})
+                <div>{task.name}</div>
+                <div className="task-details">
+                  <div className="task-detail">Priority: {task.priority}</div>
+                  <div className="task-detail">Time: {task.time}</div>
+                  <div className="task-detail">Difficulty: {task.difficulty}</div>
+                </div>
               </li>
             ))}
           </ul>
